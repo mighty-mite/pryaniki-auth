@@ -6,11 +6,43 @@ import {
   TableRow,
 } from "@mui/material";
 import "./Main.css";
+import useHttp from "../utils/useHttp";
+import { useEffect, useState } from "react";
+import { TableData } from "../utils/types";
 
 export default function MainPage() {
+  const { getTable } = useHttp();
+  const [tableData, setTableData] = useState<TableData[]>([]);
+
+  const token = sessionStorage.getItem("token");
+
+  useEffect(() => {
+    if (token) getTable(token).then((data) => setTableData(data));
+  }, [token]);
+
+  const renderIt = (arr: TableData[]) => {
+    return arr.map((item, i) => {
+      return (
+        <TableRow key={i}>
+          <TableCell>{item.companySigDate}</TableCell>
+          <TableCell>{item.companySignatureName}</TableCell>
+          <TableCell>{item.documentName}</TableCell>
+          <TableCell>{item.documentStatus}</TableCell>
+          <TableCell>{item.documentType}</TableCell>
+          <TableCell>{item.employeeNumber}</TableCell>
+          <TableCell>{item.employeeSigDate}</TableCell>
+          <TableCell>{item.employeeSignatureName}</TableCell>
+        </TableRow>
+      );
+    });
+  };
+
+  const content = renderIt(tableData);
+
   return (
     <section className="main">
       <h2 className="main__heading">Main Page</h2>
+      <div></div>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
@@ -24,18 +56,7 @@ export default function MainPage() {
             <TableCell>Employee Signature Name</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell>1</TableCell>
-            <TableCell>2</TableCell>
-            <TableCell>3</TableCell>
-            <TableCell>4</TableCell>
-            <TableCell>5</TableCell>
-            <TableCell>6</TableCell>
-            <TableCell>7</TableCell>
-            <TableCell>8</TableCell>
-          </TableRow>
-        </TableBody>
+        <TableBody>{content}</TableBody>
       </Table>
     </section>
   );
