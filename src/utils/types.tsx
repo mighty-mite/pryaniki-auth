@@ -12,4 +12,5 @@ export interface TableData {
   employeeNumber: string;
   employeeSigDate: string;
   employeeSignatureName: string;
+  id: string;
 }
