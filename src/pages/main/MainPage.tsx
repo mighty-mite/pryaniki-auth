@@ -7,18 +7,24 @@ import {
   TableRow,
 } from "@mui/material";
 import "./Main.css";
-import useHttp from "../utils/useHttp";
+import useHttp from "../../utils/useHttp";
 import { useEffect, useState } from "react";
-import { TableData } from "../utils/types";
+import { TableData } from "../../utils/types";
+import TableSkeleton from "../../components/tableSkeleton/TableSkeleton";
 
 export default function MainPage() {
   const { getTable, deleteTableRow } = useHttp();
   const [tableData, setTableData] = useState<TableData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    if (token) getTable(token).then((data) => setTableData(data));
+    if (token)
+      getTable(token).then((data) => {
+        setTableData(data);
+        setIsLoading(false);
+      });
   }, [token, tableData]);
 
   const onDelete = (id: string) => {
@@ -52,8 +58,11 @@ export default function MainPage() {
   };
 
   const content = renderIt(tableData);
+  const loader = isLoading ? <TableSkeleton /> : null;
 
-  return (
+  return isLoading ? (
+    loader
+  ) : (
     <section className="main">
       <h2 className="main__heading">Main Page</h2>
       <div></div>

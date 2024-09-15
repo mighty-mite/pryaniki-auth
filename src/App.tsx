@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import MainPage from "./pages/MainPage";
-import LoginPage from "./pages/LoginPage";
+import MainPage from "./pages/main/MainPage";
+import LoginPage from "./pages/login/LoginPage";
 import PrivateRoute from "./pages/PrivateRoute";
 import AuthContext from "./context";
 import { useState } from "react";

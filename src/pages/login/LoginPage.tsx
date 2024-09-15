@@ -1,9 +1,9 @@
 import { Button, TextField } from "@mui/material";
 import "./LoginPage.css";
-import AuthContext from "../context";
+import AuthContext from "../../context";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useHttp from "../utils/useHttp";
+import useHttp from "../../utils/useHttp";
 
 export default function LoginPage() {
   const { setToken, token } = useContext(AuthContext);
