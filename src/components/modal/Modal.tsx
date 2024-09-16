@@ -16,13 +16,10 @@ export default function Modal(props: Props) {
         <TextField placeholder="Document Type" size="small" />
         <TextField placeholder="Employee Number" size="small" />
         <TextField placeholder="Employee Signature Name" size="small" />
-        <Button
-          size="small"
-          variant="contained"
-          color="error"
-          onClick={() => onClose()}>
+        <Button variant="contained" color="error" onClick={() => onClose()}>
           close
         </Button>
+        <Button variant="contained">submit</Button>
       </form>
     </div>
   );
