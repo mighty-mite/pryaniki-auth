@@ -1,5 +1,9 @@
 .main {
-  min-height: 100vh;
+  /* min-height: 100vh; */
+}
+
+.main__header {
+  position: relative;
 }
 
 .main__heading {

@@ -11,11 +11,14 @@ import useHttp from "../../utils/useHttp";
 import { useEffect, useState } from "react";
 import { TableData } from "../../utils/types";
 import TableSkeleton from "../../components/tableSkeleton/TableSkeleton";
+import { createPortal } from "react-dom";
+import Modal from "../../components/modal/Modal";
 
 export default function MainPage() {
   const { getTable, deleteTableRow } = useHttp();
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const token = sessionStorage.getItem("token");
 
@@ -31,7 +34,7 @@ export default function MainPage() {
     if (token) deleteTableRow(token, id);
   };
 
-  const renderIt = (arr: TableData[]) => {
+  const renderData = (arr: TableData[]) => {
     return arr.map((item) => {
       return (
         <TableRow key={item.id}>
@@ -57,15 +60,22 @@ export default function MainPage() {
     });
   };
 
-  const content = renderIt(tableData);
+  const content = renderData(tableData);
   const loader = isLoading ? <TableSkeleton /> : null;
 
   return isLoading ? (
     loader
   ) : (
     <section className="main">
-      <h2 className="main__heading">Main Page</h2>
-      <div></div>
+      <div className="main__header">
+        <h2 className="main__heading">Main Page</h2>
+        <Button
+          onClick={() => setShowModal(true)}
+          variant="contained"
+          style={{ position: "absolute", right: "0", top: "0" }}>
+          New Entry
+        </Button>
+      </div>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
@@ -82,6 +92,11 @@ export default function MainPage() {
         </TableHead>
         <TableBody>{content}</TableBody>
       </Table>
+      {showModal &&
+        createPortal(
+          <Modal onClose={() => setShowModal(false)} />,
+          document.body
+        )}
     </section>
   );
 }
