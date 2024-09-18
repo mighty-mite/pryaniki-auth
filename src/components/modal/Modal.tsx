@@ -16,6 +16,14 @@ export default function Modal(props: Props) {
         <TextField placeholder="Document Type" size="small" />
         <TextField placeholder="Employee Number" size="small" />
         <TextField placeholder="Employee Signature Name" size="small" />
+        <label htmlFor="company-signature-date">
+          Choose Company Signature Date
+        </label>
+        <input id="company-signature-date" type="datetime-local" step="1" />
+        <label htmlFor="employee-signature-date">
+          Choose Employee Signature Date
+        </label>
+        <input id="employee-signature-date" type="datetime-local" step="1" />
         <Button variant="contained" color="error" onClick={() => onClose()}>
           close
         </Button>
