@@ -1,13 +1,16 @@
+import useHttp from "../../utils/useHttp";
 import { Button, TextField } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { v4 as uuidv4 } from "uuid";
 
 import "./Modal.css";
 import { ModalFormValues } from "../../utils/types";
 
 interface Props {
   onClose: () => void;
+  token: string;
 }
 
 const schema = yup
@@ -35,22 +38,29 @@ const defaultValues = {
 };
 
 export default function Modal(props: Props) {
+  const { onClose, token } = props;
   const {
     control,
     handleSubmit,
     formState: { errors },
     trigger,
     register,
+    reset,
   } = useForm<ModalFormValues>({
     defaultValues,
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<ModalFormValues> = (data) => {
+    data.companySigDate = new Date(data.companySigDate).toISOString();
+    data.employeeSigDate = new Date(data.employeeSigDate).toISOString();
     console.log(data);
+    const newEntry = { ...data, id: uuidv4() };
+    createTableRow(token, newEntry);
+    reset();
   };
 
-  const { onClose } = props;
+  const { createTableRow } = useHttp();
 
   return (
     <div className="modal">

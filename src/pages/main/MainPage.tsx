@@ -20,7 +20,7 @@ export default function MainPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("token")!;
 
   useEffect(() => {
     if (token)
@@ -94,7 +94,7 @@ export default function MainPage() {
       </Table>
       {showModal &&
         createPortal(
-          <Modal onClose={() => setShowModal(false)} />,
+          <Modal token={token} onClose={() => setShowModal(false)} />,
           document.body
         )}
     </section>
