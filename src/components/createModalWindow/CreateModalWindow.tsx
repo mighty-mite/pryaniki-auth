@@ -1,16 +1,17 @@
 import useHttp from "../../utils/useHttp";
+import { ModalFormValues, TableData } from "../../utils/types";
 import { Button, TextField } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { v4 as uuidv4 } from "uuid";
+import * as yup from "yup";
 
 import "./Modal.css";
-import { ModalFormValues } from "../../utils/types";
 
 interface Props {
   onClose: () => void;
   token: string;
+  setNewData: (data: TableData) => void;
 }
 
 const schema = yup
@@ -37,8 +38,8 @@ const defaultValues = {
   employeeSignatureName: "",
 };
 
-export default function Modal(props: Props) {
-  const { onClose, token } = props;
+export default function CreateModalWindow(props: Props) {
+  const { onClose, token, setNewData } = props;
   const {
     control,
     handleSubmit,
@@ -54,9 +55,9 @@ export default function Modal(props: Props) {
   const onSubmit: SubmitHandler<ModalFormValues> = (data) => {
     data.companySigDate = new Date(data.companySigDate).toISOString();
     data.employeeSigDate = new Date(data.employeeSigDate).toISOString();
-    console.log(data);
     const newEntry = { ...data, id: uuidv4() };
     createTableRow(token, newEntry);
+    setNewData(newEntry);
     reset();
   };
 

@@ -1,5 +1,6 @@
 import {
   Button,
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -12,40 +13,123 @@ import { useEffect, useState } from "react";
 import { TableData } from "../../utils/types";
 import TableSkeleton from "../../components/tableSkeleton/TableSkeleton";
 import { createPortal } from "react-dom";
-import Modal from "../../components/modal/Modal";
+import CreateModalWindow from "../../components/createModalWindow/CreateModalWindow";
 
 export default function MainPage() {
-  const { getTable, deleteTableRow } = useHttp();
+  const { getTable, deleteTableRow, editTableRow } = useHttp();
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editState, setEditState] = useState<{ [key: string]: boolean }>({});
 
   const token = sessionStorage.getItem("token")!;
 
   useEffect(() => {
-    if (token)
-      getTable(token).then((data) => {
-        setTableData(data);
-        setIsLoading(false);
-      });
-  }, [token, tableData]);
+    const fetchData = async () => {
+      if (token)
+        getTable(token).then((data) => {
+          setTableData(data);
+          setIsLoading(false);
+        });
+    };
+    fetchData();
+  }, [token]);
 
   const onDelete = (id: string) => {
-    if (token) deleteTableRow(token, id);
+    if (token)
+      deleteTableRow(token, id).then(() => {
+        setTableData((prevData) => prevData.filter((item) => item.id !== id));
+      });
   };
+
+  const onEdit = (id: string) => {
+    setEditState((prevState) => ({
+      ...prevState,
+      [id]: !(prevState[id] ?? false),
+    }));
+    if (editState[id] === true) {
+      const target = tableData.find((item) => item.id === id);
+      if (target) editTableRow(token, id, target);
+    }
+  };
+
+  const onInputChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    id: string,
+    field: keyof TableData
+  ) => {
+    const updatedData = e.target.value;
+    setTableData((prevData) =>
+      prevData.map((item) =>
+        item.id === id ? { ...item, [field]: updatedData } : item
+      )
+    );
+  };
+  console.log("render");
 
   const renderData = (arr: TableData[]) => {
     return arr.map((item) => {
+      const isReadOnly = !(editState[item.id] ?? false);
       return (
         <TableRow key={item.id}>
           <TableCell>{item.companySigDate}</TableCell>
-          <TableCell>{item.companySignatureName}</TableCell>
-          <TableCell>{item.documentName}</TableCell>
-          <TableCell>{item.documentStatus}</TableCell>
-          <TableCell>{item.documentType}</TableCell>
-          <TableCell>{item.employeeNumber}</TableCell>
+          <TableCell>
+            <Input
+              onChange={(e) =>
+                onInputChange(e, item.id, "companySignatureName")
+              }
+              readOnly={isReadOnly}
+              value={item.companySignatureName}
+            />
+          </TableCell>
+
+          <TableCell>
+            <Input
+              onChange={(e) => onInputChange(e, item.id, "documentName")}
+              readOnly={isReadOnly}
+              value={item.documentName}
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              onChange={(e) => onInputChange(e, item.id, "documentStatus")}
+              readOnly={isReadOnly}
+              value={item.documentStatus}
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              onChange={(e) => onInputChange(e, item.id, "documentType")}
+              readOnly={isReadOnly}
+              value={item.documentType}
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              onChange={(e) => onInputChange(e, item.id, "employeeNumber")}
+              readOnly={isReadOnly}
+              value={item.employeeNumber}
+            />
+          </TableCell>
           <TableCell>{item.employeeSigDate}</TableCell>
-          <TableCell>{item.employeeSignatureName}</TableCell>
+          <TableCell>
+            <Input
+              onChange={(e) =>
+                onInputChange(e, item.id, "employeeSignatureName")
+              }
+              readOnly={isReadOnly}
+              value={item.employeeSignatureName}
+            />
+          </TableCell>
+          <TableCell>
+            <Button
+              onClick={() => onEdit(item.id)}
+              size="small"
+              variant="outlined"
+              color="primary">
+              {editState[item.id] ? "Save" : "Edit"}
+            </Button>
+          </TableCell>
           <TableCell>
             <Button
               onClick={() => onDelete(item.id)}
@@ -88,13 +172,20 @@ export default function MainPage() {
             <TableCell>Employee Signature Date</TableCell>
             <TableCell>Employee Signature Name</TableCell>
             <TableCell>Delete</TableCell>
+            <TableCell>Edit</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{content}</TableBody>
       </Table>
       {showModal &&
         createPortal(
-          <Modal token={token} onClose={() => setShowModal(false)} />,
+          <CreateModalWindow
+            token={token}
+            onClose={() => setShowModal(false)}
+            setNewData={(data: TableData) =>
+              setTableData((prev) => [...prev, data])
+            }
+          />,
           document.body
         )}
     </section>

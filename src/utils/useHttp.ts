@@ -1,4 +1,4 @@
-import { TableData } from "./types";
+import { ModalFormValues, TableData } from "./types";
 
 export default function useHttp() {
   const hostUrl = "https://test.v5.pryaniky.com";
@@ -6,6 +6,7 @@ export default function useHttp() {
   const getUrl = "/ru/data/v3/testmethods/docs/userdocs/get";
   const createUrl = "/ru/data/v3/testmethods/docs/userdocs/create";
   const deleteUrl = "/ru/data/v3/testmethods/docs/userdocs/delete/";
+  const editUrl = "/ru/data/v3/testmethods/docs/userdocs/set/";
 
   const authorize = async (username: string, password: string) => {
     const response = await fetch(`${hostUrl}${authUrl}`, {
@@ -81,5 +82,27 @@ export default function useHttp() {
     }
   };
 
-  return { authorize, getTable, createTableRow, deleteTableRow };
+  const editTableRow = async (
+    token: string,
+    id: string,
+    tableRow: ModalFormValues
+  ) => {
+    const response = await fetch(`${hostUrl}${editUrl}${id}`, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth": token,
+      },
+      body: JSON.stringify(tableRow),
+    });
+
+    if (!response.ok) {
+      throw new Error("Data sending failed");
+    }
+  };
+
+  return { authorize, getTable, createTableRow, deleteTableRow, editTableRow };
 }
