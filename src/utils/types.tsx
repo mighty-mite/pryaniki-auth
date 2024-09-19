@@ -3,7 +3,7 @@ export interface AuthContextType {
   setToken: (value: string) => void;
 }
 
-export interface TableData {
+export interface ModalFormValues {
   companySigDate: string;
   companySignatureName: string;
   documentName: string;
@@ -12,5 +12,8 @@ export interface TableData {
   employeeNumber: string;
   employeeSigDate: string;
   employeeSignatureName: string;
+}
+
+export interface TableData extends ModalFormValues {
   id: string;
 }
