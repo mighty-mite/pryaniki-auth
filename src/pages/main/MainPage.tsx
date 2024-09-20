@@ -65,7 +65,6 @@ export default function MainPage() {
       )
     );
   };
-  console.log("render");
 
   const renderData = (arr: TableData[]) => {
     return arr.map((item) => {
