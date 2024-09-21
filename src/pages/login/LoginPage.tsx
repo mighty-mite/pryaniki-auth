@@ -1,16 +1,16 @@
 import { Button, TextField } from "@mui/material";
-import "./LoginPage.css";
 import AuthContext from "../../context";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthorize from "../../hooks/useAuthorize";
+import "./LoginPage.css";
 
 export default function LoginPage() {
   const { setToken, token } = useContext(AuthContext);
   const [username, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { authorize } = useAuthorize();
+  const { authorize, authError } = useAuthorize();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +43,11 @@ export default function LoginPage() {
         <Button type="submit" size="large" variant="contained">
           Enter
         </Button>
+        {authError ? (
+          <span style={{ color: "red" }}>
+            your password or login incorrect, try again
+          </span>
+        ) : null}
       </form>
     </section>
   );
