@@ -9,16 +9,18 @@ import {
 } from "@mui/material";
 import "./Main.css";
 import useHttp from "../../utils/useHttp";
+import useRetrieve from "../../hooks/useRetrieve";
 import { useEffect, useState } from "react";
 import { TableData } from "../../utils/types";
 import TableSkeleton from "../../components/tableSkeleton/TableSkeleton";
 import { createPortal } from "react-dom";
 import CreateModalWindow from "../../components/createModalWindow/CreateModalWindow";
+import TableError from "../../components/TableError/TableError";
 
 export default function MainPage() {
-  const { getTable, deleteTableRow, editTableRow } = useHttp();
+  const { retrieve, retrieveLoading, retrieveError } = useRetrieve();
+  const { deleteTableRow, editTableRow } = useHttp();
   const [tableData, setTableData] = useState<TableData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editState, setEditState] = useState<{ [key: string]: boolean }>({});
 
@@ -27,13 +29,16 @@ export default function MainPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (token)
-        getTable(token).then((data) => {
+        retrieve(token).then((data) => {
           setTableData(data);
-          setIsLoading(false);
         });
     };
     fetchData();
   }, [token]);
+
+  useEffect(() => {
+    if (retrieveError) setTableData([]);
+  }, [retrieveError]);
 
   const onDelete = (id: string) => {
     if (token)
@@ -144,9 +149,10 @@ export default function MainPage() {
   };
 
   const content = renderData(tableData);
-  const loader = isLoading ? <TableSkeleton /> : null;
+  const loader = retrieveLoading ? <TableSkeleton /> : null;
+  const error = retrieveError ? <TableError /> : null;
 
-  return isLoading ? (
+  return retrieveLoading ? (
     loader
   ) : (
     <section className="main">
@@ -174,7 +180,10 @@ export default function MainPage() {
             <TableCell>Edit</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{content}</TableBody>
+        <TableBody>
+          {content}
+          {error}
+        </TableBody>
       </Table>
       {showModal &&
         createPortal(

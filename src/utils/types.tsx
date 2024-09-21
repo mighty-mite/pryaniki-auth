@@ -17,3 +17,12 @@ export interface ModalFormValues {
 export interface TableData extends ModalFormValues {
   id: string;
 }
+
+export enum Url {
+  hostUrl = "https://test.v5.pryaniky.com",
+  authUrl = "/ru/data/v3/testmethods/docs/login",
+  getUrl = "/ru/data/v3/testmethods/docs/userdocs/get",
+  createUrl = "/ru/data/v3/testmethods/docs/userdocs/create",
+  deleteUrl = "/ru/data/v3/testmethods/docs/userdocs/delete/",
+  editUrl = "/ru/data/v3/testmethods/docs/userdocs/set/",
+}

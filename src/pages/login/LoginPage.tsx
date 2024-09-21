@@ -3,14 +3,14 @@ import "./LoginPage.css";
 import AuthContext from "../../context";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useHttp from "../../utils/useHttp";
+import useAuthorize from "../../hooks/useAuthorize";
 
 export default function LoginPage() {
   const { setToken, token } = useContext(AuthContext);
   const [username, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { authorize } = useHttp();
+  const { authorize } = useAuthorize();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
