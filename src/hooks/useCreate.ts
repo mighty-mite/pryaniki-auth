@@ -2,8 +2,9 @@ import { useState } from "react";
 import { TableData, Url } from "../utils/types";
 
 export default function useCreate() {
-  try {
-    const create = async (token: string, newData: TableData) => {
+  const [isCreateError, setIsCreateError] = useState(false);
+  const create = async (token: string, newData: TableData) => {
+    try {
       const response = await fetch(`${Url.hostUrl}${Url.createUrl}`, {
         method: "POST",
         mode: "cors",
@@ -19,7 +20,10 @@ export default function useCreate() {
       if (!response.ok) {
         throw new Error("Data sending failed");
       }
-    };
-  } catch (e) {}
-  return { create };
+    } catch (e) {
+      setIsCreateError(true);
+      throw e;
+    }
+  };
+  return { create, isCreateError };
 }

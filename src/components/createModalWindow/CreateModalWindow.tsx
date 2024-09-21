@@ -1,4 +1,4 @@
-import useHttp from "../../utils/useHttp";
+import useCreate from "../../hooks/useCreate";
 import { ModalFormValues, TableData } from "../../utils/types";
 import { Button, TextField } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -56,12 +56,12 @@ export default function CreateModalWindow(props: Props) {
     data.companySigDate = new Date(data.companySigDate).toISOString();
     data.employeeSigDate = new Date(data.employeeSigDate).toISOString();
     const newEntry = { ...data, id: uuidv4() };
-    createTableRow(token, newEntry);
+    create(token, newEntry);
     setNewData(newEntry);
     reset();
   };
 
-  const { createTableRow } = useHttp();
+  const { create } = useCreate();
 
   return (
     <div className="modal">

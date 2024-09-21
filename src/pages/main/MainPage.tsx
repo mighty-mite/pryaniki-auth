@@ -8,7 +8,6 @@ import {
   TableRow,
 } from "@mui/material";
 import "./Main.css";
-import useHttp from "../../utils/useHttp";
 import useRetrieve from "../../hooks/useRetrieve";
 import { useEffect, useState } from "react";
 import { TableData } from "../../utils/types";
@@ -16,10 +15,13 @@ import TableSkeleton from "../../components/tableSkeleton/TableSkeleton";
 import { createPortal } from "react-dom";
 import CreateModalWindow from "../../components/createModalWindow/CreateModalWindow";
 import TableError from "../../components/TableError/TableError";
+import useDelete from "../../hooks/useDelete";
+import useEdit from "../../hooks/useEdit";
 
 export default function MainPage() {
   const { retrieve, retrieveLoading, retrieveError } = useRetrieve();
-  const { deleteTableRow, editTableRow } = useHttp();
+  const { deleteData } = useDelete();
+  const { edit } = useEdit();
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editState, setEditState] = useState<{ [key: string]: boolean }>({});
@@ -42,7 +44,7 @@ export default function MainPage() {
 
   const onDelete = (id: string) => {
     if (token)
-      deleteTableRow(token, id).then(() => {
+      deleteData(token, id).then(() => {
         setTableData((prevData) => prevData.filter((item) => item.id !== id));
       });
   };
@@ -54,7 +56,7 @@ export default function MainPage() {
     }));
     if (editState[id] === true) {
       const target = tableData.find((item) => item.id === id);
-      if (target) editTableRow(token, id, target);
+      if (target) edit(token, id, target);
     }
   };
 
