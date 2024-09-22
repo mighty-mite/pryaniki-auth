@@ -1,6 +1,6 @@
 import {
+  Box,
   Button,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +17,7 @@ import CreateModalWindow from "../../components/createModalWindow/CreateModalWin
 import TableError from "../../components/TableError/TableError";
 import useDelete from "../../hooks/useDelete";
 import useEdit from "../../hooks/useEdit";
+import ShowModalBtn from "../../components/ShowModalBtn/ShowModalBtn";
 
 export default function MainPage() {
   const { retrieve, retrieveLoading, retrieveError } = useRetrieve();
@@ -61,11 +62,11 @@ export default function MainPage() {
   };
 
   const onInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    e: React.FormEvent<HTMLDivElement>,
     id: string,
     field: keyof TableData
   ) => {
-    const updatedData = e.target.value;
+    const updatedData = e.currentTarget.textContent;
     setTableData((prevData) =>
       prevData.map((item) =>
         item.id === id ? { ...item, [field]: updatedData } : item
@@ -80,52 +81,56 @@ export default function MainPage() {
         <TableRow key={item.id}>
           <TableCell>{item.companySigDate}</TableCell>
           <TableCell>
-            <Input
-              onChange={(e) =>
-                onInputChange(e, item.id, "companySignatureName")
-              }
-              readOnly={isReadOnly}
-              value={item.companySignatureName}
-            />
+            <Box
+              onInput={(e) => onInputChange(e, item.id, "companySignatureName")}
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.companySignatureName}
+            </Box>
           </TableCell>
 
           <TableCell>
-            <Input
-              onChange={(e) => onInputChange(e, item.id, "documentName")}
-              readOnly={isReadOnly}
-              value={item.documentName}
-            />
+            <Box
+              onInput={(e) => onInputChange(e, item.id, "documentName")}
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.documentName}
+            </Box>
           </TableCell>
           <TableCell>
-            <Input
-              onChange={(e) => onInputChange(e, item.id, "documentStatus")}
-              readOnly={isReadOnly}
-              value={item.documentStatus}
-            />
+            <Box
+              onInput={(e) => onInputChange(e, item.id, "documentStatus")}
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.documentStatus}
+            </Box>
           </TableCell>
           <TableCell>
-            <Input
-              onChange={(e) => onInputChange(e, item.id, "documentType")}
-              readOnly={isReadOnly}
-              value={item.documentType}
-            />
+            <Box
+              onInput={(e) => onInputChange(e, item.id, "documentType")}
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.documentType}
+            </Box>
           </TableCell>
           <TableCell>
-            <Input
-              onChange={(e) => onInputChange(e, item.id, "employeeNumber")}
-              readOnly={isReadOnly}
-              value={item.employeeNumber}
-            />
+            <Box
+              onInput={(e) => onInputChange(e, item.id, "employeeNumber")}
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.employeeNumber}
+            </Box>
           </TableCell>
           <TableCell>{item.employeeSigDate}</TableCell>
           <TableCell>
-            <Input
-              onChange={(e) =>
+            <Box
+              onInput={(e) =>
                 onInputChange(e, item.id, "employeeSignatureName")
               }
-              readOnly={isReadOnly}
-              value={item.employeeSignatureName}
-            />
+              contentEditable={!isReadOnly}
+              suppressContentEditableWarning={true}>
+              {item.employeeSignatureName}
+            </Box>
           </TableCell>
           <TableCell>
             <Button
@@ -154,18 +159,11 @@ export default function MainPage() {
   const loader = retrieveLoading ? <TableSkeleton /> : null;
   const error = retrieveError ? <TableError /> : null;
 
-  return retrieveLoading ? (
-    loader
-  ) : (
+  return (
     <section className="main">
       <div className="main__header">
         <h2 className="main__heading">Main Page</h2>
-        <Button
-          onClick={() => setShowModal(true)}
-          variant="contained"
-          style={{ position: "absolute", right: "0", top: "0" }}>
-          New Entry
-        </Button>
+        <ShowModalBtn showModal={setShowModal} />
       </div>
       <Table stickyHeader>
         <TableHead>
@@ -178,11 +176,12 @@ export default function MainPage() {
             <TableCell>Employee Number</TableCell>
             <TableCell>Employee Signature Date</TableCell>
             <TableCell>Employee Signature Name</TableCell>
-            <TableCell>Delete</TableCell>
             <TableCell>Edit</TableCell>
+            <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
+          {loader}
           {content}
           {error}
         </TableBody>
